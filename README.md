@@ -2,7 +2,7 @@
 # Task Manager
 
 A full-stack task management application to help you track and manage your tasks effectively. The project includes a React frontend and a Node.js backend with MongoDB for data persistence.
-
+Deployed Link - https://task-mgmnt-alpha.vercel.app/
 ## Features
 - Add tasks with a title and description.
 - Mark tasks as complete.
