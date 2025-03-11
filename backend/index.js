@@ -11,7 +11,7 @@ app.use(express.json());
 const allowedOrigins = [
   "http://localhost:5173", // Development Frontend
   "https://your-frontend.vercel.app", // Production Frontend on Vercel
-  "https://task-mgmnt-alpha.vercel.app/",
+  "https://task-mgmnt-alpha.vercel.app",
 ];
 
 app.use(cors({
