@@ -2,69 +2,87 @@ import { useState,useEffect } from 'react';
 import './App.css';
 import axios from 'axios';
 import TaskSvg from './assets/task-square-svgrepo-com.svg'
-function InputArea() {
+function InputArea({ refreshTasks }) {
   const [text, setText] = useState('');
-  const [height, setHeight] = useState(40); // Initial height
+  const [height, setHeight] = useState(40);
 
   const handleInput = (e) => {
     setText(e.target.value);
-    setHeight(Math.min(e.target.scrollHeight, 200)); // Grow until max height
+    setHeight(Math.min(e.target.scrollHeight, 200));
+  };
+
+  const addTask = async () => {
+    if (!text.trim()) return;
+
+    await axios.post("http://localhost:5000/api/tasks", { text });
+    setText("");
+    refreshTasks(); // Refresh task list after adding
   };
 
   return (
     <div className='flex'>
-    <div className="bg-stone-800 w-full rounded-lg p-4">
-      <textarea
-        placeholder="Add tasks"
-        className="rounded-lg w-full px-4 py-2 resize-none focus:outline-none leading-normal"
-        style={{ minHeight: "40px", maxHeight: "200px", overflow: "hidden", height: height }}
-        value={text}
-        onInput={handleInput}
-      ></textarea>
-            <button onClick={()=>setText("yes")} className="bg-fuchsia-800 text-white rounded-lg p-3 mt-4 ">Add Task</button>
-            </div>
-
-    </div>
-  );
-}
-function TaskList() {
-  return (
-    <div className=" rounded-lg w-full mt-4 p-4 text-center">Task List
-    <div className='grid grid-cols-4 gap-4 mt-4'>
-    <Card />
-    <Card />
-    <Card />
-    <Card />
-    <Card />
-    <Card />
-    
-    </div>
-    </div>
-  );
-}
-function Card(){
-  
-  const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    axios.get("http://localhost:3000/api/message")
-        .then(response => setMessage(response.data.message))
-        .catch(error => console.error("Error fetching data:", error));
-}, []);
-  return (
-    <div className="bg-stone-900 w-full rounded-lg border-1 border-stone-600 p-4">
-      <div className="">
-      {/* <img src="https://img.icons8.com/?size=100&id=24904&format=png&color=000000" className='w-5 h-5'></img> */}
-      <img src={TaskSvg} className='w-5 h-5'></img>
-
-        <div>{message}</div>
-        {/* <svg xmlns="{TaskSvg}" width="1em" height="1em" fill="currentColor" viewBox="0 0 256 256"></svg> */}
-        <div>🗑</div>
+      <div className="bg-stone-800 w-full rounded-lg p-4">
+        <textarea
+          placeholder="Add tasks"
+          className="rounded-lg w-full px-4 py-2 resize-none focus:outline-none leading-normal"
+          style={{ minHeight: "40px", maxHeight: "200px", overflow: "hidden", height: height }}
+          value={text}
+          onInput={handleInput}
+        ></textarea>
+        <button onClick={addTask} className="bg-fuchsia-800 text-white rounded-lg p-3 mt-4">Add Task</button>
       </div>
     </div>
   );
 }
+
+function TaskList({ tasks, refreshTasks }) {
+  return (
+    <div className="rounded-lg w-full mt-4 p-4 text-center">
+      <h2>Task List</h2>
+      <div className='grid grid-cols-4 gap-4 mt-4'>
+        {tasks.map(task => (
+          <Card key={task._id} task={task} refreshTasks={refreshTasks} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Card({ task, refreshTasks }) {
+  const deleteTask = async () => {
+    await axios.delete(`http://localhost:5000/api/tasks/${task._id}`);
+    refreshTasks();
+  };
+
+  const toggleComplete = async () => {
+    await axios.put(`http://localhost:5000/api/tasks/${task._id}`, { completed: !task.completed });
+    refreshTasks();
+  };
+
+  return (
+    <div className={`bg-stone-900 w-full rounded-lg border-1 border-stone-600 p-4 ${task.completed ? "opacity-50" : ""}`}>
+      <div className="flex justify-between items-center">
+        <img src={TaskSvg} className='w-5 h-5' alt="Task Icon" />
+        <span className={`flex-1 text-left px-2 ${task.completed ? "line-through" : ""}`}>{task.text}</span>
+        <button onClick={toggleComplete} className="text-green-400">✔</button>
+        <button onClick={deleteTask} className="text-red-400">🗑</button>
+      </div>
+    </div>
+  );
+}
+
 function App() {
+  const [tasks, setTasks] = useState([]);
+
+  const fetchTasks = async () => {
+    const response = await axios.get("http://localhost:5000/api/tasks");
+    setTasks(response.data);
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
   return (
     <>
       <div className="bg-stone-950 text-white w-full h-full">
@@ -83,18 +101,18 @@ function App() {
         </div>
         <div>
           <div className="w-full flex justify-center items-center px-10 pt-20">
-            <h3 className="text-8xl font-bold text-center">Simple Task <br></br>Management App</h3>
+            <h3 className="text-8xl font-bold text-center">Simple Task <br />Management App</h3>
           </div>
           <div className="w-full flex flex-col justify-center py-10 px-80">
-            <InputArea />
-            {/* <button className="bg-fuchsia-800 text-white w-full rounded-lg p-4 mt-4">Add Task</button> */}
-          <TaskList />
-
+            <InputArea refreshTasks={fetchTasks} />
+            <TaskList tasks={tasks} refreshTasks={fetchTasks} />
           </div>
         </div>
       </div>
     </>
   );
 }
+
+
 
 export default App;

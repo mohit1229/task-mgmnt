@@ -1,29 +1,42 @@
 const express = require("express");
-const app = express();
-require("dotenv").config();
+const mongoose = require("mongoose");
 const cors = require("cors");
-app.use(cors({ origin: "http://localhost:5173" }));
+const Task = require("./models/Task");
+require("dotenv").config(); // Load environment variables
+// console.log("MongoDB URI:", process.env.MONGO_URI); // Debugging line
 
-app.use(express.json()); // Parses incoming JSON requests
-app.get("/", (req, res) => {
-    res.send("Hello, World!");
-});
-app.get("/api/message", (req, res) => {
-    res.json({ message: "Hello from Node.js backend!" });
+const app = express();
+app.use(express.json());
+app.use(cors({ origin: "http://localhost:5173" })); // Allow frontend access
+
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB connection error:", err));
+
+// Get all tasks
+app.get("/api/tasks", async (req, res) => {
+  const tasks = await Task.find();
+  res.json(tasks);
 });
 
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-  const db = mongoose.connection;
-  db.once("open", () => console.log("Connected to MongoDB"));
-  db.on("error", (err) => console.error(err));
-  
-  // Import routes
-  const taskRoutes = require("./routes/taskRoutes");
-  app.use("/task", itemRoutes);
-  
-  // Start server
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));;
+// Create a new task
+app.post("/api/tasks", async (req, res) => {
+  const newTask = new Task({ text: req.body.text });
+  await newTask.save();
+  res.json(newTask);
+});
+
+// Delete a task
+app.delete("/api/tasks/:id", async (req, res) => {
+  await Task.findByIdAndDelete(req.params.id);
+  res.json({ message: "Task deleted" });
+});
+
+// Mark task as completed
+app.put("/api/tasks/:id", async (req, res) => {
+  const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  res.json(updatedTask);
+});
+
+app.listen(5000, () => console.log("Server running on port 5000"));
