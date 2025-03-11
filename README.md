@@ -30,7 +30,7 @@ A full-stack task management application to help you track and manage your tasks
 ### Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/task-manager.git
+   git clone https://github.com/mohit1229/task-mgmnt.git
    cd task-manager
    ```
 
@@ -105,7 +105,6 @@ task-manager/
 | GET    | `/api/tasks`       | Get all tasks           |
 | POST   | `/api/tasks`       | Add a new task          |
 | PUT  | `/api/tasks/:id`   | Update task (mark done) |
-
 | DELETE | `/api/tasks/:id`   | Delete a task           |
 
 ## Contributing
