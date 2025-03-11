@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import './App.css';
+import axios from 'axios';
 import TaskSvg from './assets/task-square-svgrepo-com.svg'
 function InputArea() {
   const [text, setText] = useState('');
@@ -20,7 +21,7 @@ function InputArea() {
         value={text}
         onInput={handleInput}
       ></textarea>
-            <button  className="bg-fuchsia-800 text-white rounded-lg p-3 mt-4 ">Add Task</button>
+            <button onClick={()=>setText("yes")} className="bg-fuchsia-800 text-white rounded-lg p-3 mt-4 ">Add Task</button>
             </div>
 
     </div>
@@ -42,13 +43,21 @@ function TaskList() {
   );
 }
 function Card(){
+  
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    axios.get("http://localhost:3000/api/message")
+        .then(response => setMessage(response.data.message))
+        .catch(error => console.error("Error fetching data:", error));
+}, []);
   return (
     <div className="bg-stone-900 w-full rounded-lg border-1 border-stone-600 p-4">
       <div className="">
       {/* <img src="https://img.icons8.com/?size=100&id=24904&format=png&color=000000" className='w-5 h-5'></img> */}
       <img src={TaskSvg} className='w-5 h-5'></img>
 
-        <div>Task 1</div>
+        <div>{message}</div>
         {/* <svg xmlns="{TaskSvg}" width="1em" height="1em" fill="currentColor" viewBox="0 0 256 256"></svg> */}
         <div>🗑</div>
       </div>
