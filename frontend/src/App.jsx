@@ -1,6 +1,10 @@
-import { useState,useEffect } from 'react';
+
+import { useState, useEffect } from 'react';
 import './App.css';
 import axios from 'axios';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+
 function InputArea({ refreshTasks }) {
   const [text, setText] = useState("");
 
@@ -11,7 +15,7 @@ function InputArea({ refreshTasks }) {
   const addTask = async () => {
     if (!text.trim()) return;
 
-    await axios.post("http://localhost:5000/api/tasks", { text });
+    await axios.post(`${API_BASE_URL}/tasks`, { text });
     setText(""); // Clear input
     refreshTasks();
   };
@@ -55,12 +59,12 @@ function TaskList({ tasks, refreshTasks }) {
 
 function Card({ task, refreshTasks }) {
   const deleteTask = async () => {
-    await axios.delete(`http://localhost:5000/api/tasks/${task._id}`);
+    await axios.delete(`${API_BASE_URL}/tasks/${task._id}`);
     refreshTasks();
   };
 
   const toggleComplete = async () => {
-    await axios.put(`http://localhost:5000/api/tasks/${task._id}`, { completed: !task.completed });
+    await axios.put(`${API_BASE_URL}/tasks/${task._id}`, { completed: !task.completed });
     refreshTasks();
   };
 
@@ -101,12 +105,11 @@ function Card({ task, refreshTasks }) {
   );
 }
 
-
 function App() {
   const [tasks, setTasks] = useState([]);
 
   const fetchTasks = async () => {
-    const response = await axios.get("http://localhost:5000/api/tasks");
+    const response = await axios.get(`${API_BASE_URL}/tasks`);
     setTasks(response.data);
   };
 
@@ -117,23 +120,23 @@ function App() {
   return (
     <>
       <div className="bg-stone-950 text-white w-full h-full">
-      <div className="flex bg-zinc-800 justify-between items-center p-4">
-  <div>
-    <img 
-      alt="Logo" 
-      src="https://img.icons8.com/?size=100&id=123740&format=png&color=000000" 
-      className="w-10 h-10"
-    />
-  </div>
-  <div>
-    <ul className="flex items-center gap-6 px-4">
-      <li><div className='border border-fuchsia-800 rounded-xl px-4 py-1 pb-1.5 inline-block'>Home</div></li>
-      <li>About</li>
-      <li>Services</li>
-      <li><div className='bg-fuchsia-800 rounded-xl px-4 py-1 pb-1.5 inline-block'>Contact</div></li>
-    </ul>
-  </div>
-</div>
+        <div className="flex bg-zinc-800 justify-between items-center p-4">
+          <div>
+            <img 
+              alt="Logo" 
+              src="https://img.icons8.com/?size=100&id=123740&format=png&color=000000" 
+              className="w-10 h-10"
+            />
+          </div>
+          <div>
+            <ul className="flex items-center gap-6 px-4">
+              <li><div className='border border-fuchsia-800 rounded-xl px-4 py-1 pb-1.5 inline-block'>Home</div></li>
+              <li>About</li>
+              <li>Services</li>
+              <li><div className='bg-fuchsia-800 rounded-xl px-4 py-1 pb-1.5 inline-block'>Contact</div></li>
+            </ul>
+          </div>
+        </div>
 
         <div>
           <div className="w-full flex justify-center items-center px-10 pt-20">
@@ -148,7 +151,5 @@ function App() {
     </>
   );
 }
-
-
 
 export default App;
