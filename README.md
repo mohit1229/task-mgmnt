@@ -105,7 +105,6 @@ task-manager/
 | GET    | `/api/tasks`       | Get all tasks           |
 | POST   | `/api/tasks`       | Add a new task          |
 | PUT  | `/api/tasks/:id`   | Update task (mark done) |
-
 | DELETE | `/api/tasks/:id`   | Delete a task           |
 
 ## Contributing
