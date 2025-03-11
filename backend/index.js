@@ -2,12 +2,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const Task = require("./models/Task");
-require("dotenv").config(); // Load environment variables
-// console.log("MongoDB URI:", process.env.MONGO_URI); // Debugging line
+require("dotenv").config();
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:5173" })); // Allow frontend access
+app.use(cors({ origin: "http://localhost:5173" })); // Frontend port
 
 mongoose
   .connect(process.env.MONGO_URI)

@@ -1,7 +1,6 @@
 import { useState,useEffect } from 'react';
 import './App.css';
 import axios from 'axios';
-import TaskSvg from './assets/task-square-svgrepo-com.svg'
 function InputArea({ refreshTasks }) {
   const [text, setText] = useState("");
 
@@ -23,12 +22,12 @@ function InputArea({ refreshTasks }) {
         placeholder="Add tasks"
         className="rounded-lg w-full px-4 py-2 resize-none focus:outline-none leading-normal"
         style={{
-          height: "100px", // Fixed height
+          height: "100px", 
           maxHeight: "200px",
-          overflowY: "auto", // Scroll pane always appears when needed
+          overflowY: "auto", 
         }}
         value={text}
-        onChange={handleInput} // Use `onChange` instead of `onInput`
+        onChange={handleInput} 
       ></textarea>
       <button onClick={addTask} className="bg-fuchsia-800 text-white rounded-lg p-3 ml-4">
         <img
@@ -67,7 +66,6 @@ function Card({ task, refreshTasks }) {
 
   return (
     <div className={`bg-stone-900 w-full rounded-lg border border-stone-600 p-4 flex flex-col h-40 ${task.completed ? "opacity-50" : ""}`}>
-      {/* Task Icon (Fixed Position) */}
       <div className="flex ">
         <img 
           src="https://img.icons8.com/?size=100&id=67671&format=png&color=FFFFFF" 
@@ -76,7 +74,6 @@ function Card({ task, refreshTasks }) {
         />
       </div>
 
-      {/* Task Text (Scrollable if too long) */}
       <div 
         className={`flex-1 text-center px-4 overflow-hidden break-words overflow-y-auto ${task.completed ? "line-through" : ""}`}
         style={{ wordWrap: "break-word", whiteSpace: "pre-wrap", maxHeight: "80px" }}
@@ -84,7 +81,6 @@ function Card({ task, refreshTasks }) {
         {task.text}
       </div>
 
-      {/* Buttons Stuck to Bottom */}
       <div className="flex space-x-4 mt-auto pt-2">
         <button onClick={toggleComplete} className="text-green-400 w-5 h-5">
           <img 
